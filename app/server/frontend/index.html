@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="css/styles.css" />
+        <title>Text Summary | Powered with AI ...</title>
+    </head>
+    <body>
+        <main>
+            <div class="container">
+                <div id="contents">
+                    <div class="content-01">
+                        <div class="select-wrapper">
+                            <select name="data_type" id="data_type">
+                                <option value="image">Image</option>
+                                <option value="link">Link</option>
+                                <option value="text">Text</option>
+                            </select>
+                            <div class="arrow"></div>
+                        </div>
+                        <div id="data_type_container">
+                            <form
+                                id="dataTypeForm"
+                                class="dropzone"
+                                action=""
+                            ></form>
+                            <div id="loader">
+                                <!-- <span>&leftrightarrows;</span> -->
+                                <button id="submit" type="submit">
+                                    &leftrightarrows;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-02">
+                        <div class="select-wrapper">
+                            <select name="summary_length" id="summary_length">
+                                <option value="short">Short</option>
+                                <option value="moderate">Moderate</option>
+                                <option value="long">Long</option>
+                            </select>
+                            <div class="arrow"></div>
+                        </div>
+                        <div id="summary_container">
+                            <p id="summary_text">
+                                Bandana ft Asake - Fireboy DML ... Lowkey All of
+                                dem don dey notice I'm not joking All my guys
+                                them dem know me Since '06 Have been writing
+                                this story I no be OG Buh if you ak them dem I
+                                no dey blow trees Orin lo'n yimi Lori Music
+                                chose me Just know this and know peace I dey
+                                lowkey ... Lowkey All of dem don dey notice I'm
+                                not joking All my guys them dem know me Since
+                                '06 Have been writing this story I no be OG Buh
+                                if you ak them dem I no dey blow trees Orin lo'n
+                                yimi Lori Music chose me Just know this and know
+                                peace I dey lowkey ... Lowkey All of dem don dey
+                                notice I'm not joking All my guys them dem know
+                                me Since '06 Have been writing this story I no
+                                be OG Buh if you ak them dem I no dey blow trees
+                                Orin lo'n yimi Lori Music chose me Just know
+                                this and know peace I dey lowkey
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script src="./js/scripts.js"></script>
+    </body>
+</html>

@@ -1,0 +1,217 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  --three-px: 3px;
+  --seven-px: 7px;
+  --ten-px: 10px;
+  --dark-01: rgb(21, 23, 24);
+  --dark-02: rgb(37, 39, 40);
+  --dark-03: rgb(66, 68, 72);
+  --dark-04: rgb(99, 101, 102);
+  --light-01: rgb(255, 255, 255);
+  --light-02: rgb(188, 190, 192, 0.45);
+  --blue-01: #2288cc;
+}
+
+html {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+html * {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+body {
+  width: 98.5vw;
+  padding: calc(var(--ten-px) * 5.5) 0px;
+  display: grid;
+  place-items: center;
+}
+body main {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+body main div.container {
+  width: 70%;
+  height: 85vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--blue-01);
+}
+body main div.container div#contents {
+  width: 70%;
+  height: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid red;
+}
+body main div.container div#contents div.content-01, body main div.container div#contents div.content-02 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border: 1px solid green;
+}
+body main div.container div#contents div.content-01 {
+  flex: 0.6;
+  height: 100%;
+}
+body main div.container div#contents div.content-01 div.select-wrapper {
+  --select-width: 140px;
+  --select-height: 45px;
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: var(--select-width);
+  height: var(--select-height);
+  background-color: var(--dark-01);
+  border-radius: 2px;
+}
+body main div.container div#contents div.content-01 div.select-wrapper select {
+  width: calc(var(--select-width));
+  height: 100%;
+  font-size: 1.2rem;
+  padding-left: 10px;
+  color: var(--light-01);
+  background-color: transparent;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+body main div.container div#contents div.content-01 div.select-wrapper select option {
+  background-color: var(--dark-01);
+}
+body main div.container div#contents div.content-01 div.select-wrapper select::selection + div.arrow {
+  transform: rotate(-45);
+}
+body main div.container div#contents div.content-01 div.select-wrapper div.arrow {
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 50%;
+  right: 20%;
+  transform: translateY(-30%);
+  pointer-events: none;
+  border: calc(var(--select-height) * 0.15) solid transparent;
+  border-top: calc(var(--select-height) * 0.25) solid var(--light-02);
+}
+body main div.container div#contents div.content-01 div#data_type_container {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  border: 1px solid blue;
+}
+body main div.container div#contents div.content-01 div#data_type_container form#dataTypeForm {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--light-02);
+}
+body main div.container div#contents div.content-01 div#data_type_container form#dataTypeForm div#user_input_container label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+body main div.container div#contents div.content-01 div#data_type_container form#dataTypeForm div#user_input_container label input {
+  display: none;
+}
+body main div.container div#contents div.content-01 div#data_type_container form#dataTypeForm div#user_input_container label div {
+  display: flex;
+  flex-direction: column;
+}
+body main div.container div#contents div.content-01 div#data_type_container form#dataTypeForm div#user_input_container label div span {
+  padding: var(--three-px);
+  font-family: "Calibri Light";
+  font-weight: 800;
+}
+body main div.container div#contents div.content-01 div#data_type_container form#dataTypeForm div#user_input_container label div span:nth-child(1) {
+  color: var(--dark-01);
+}
+body main div.container div#contents div.content-01 div#data_type_container form#dataTypeForm div#user_input_container label div span:nth-child(2) {
+  color: var(--dark-03);
+}
+body main div.container div#contents div.content-01 div#data_type_container form#dataTypeForm div#user_input_container label div span:nth-child(3) {
+  color: var(--dark-04);
+}
+body main div.container div#contents div.content-01 div#data_type_container form#dataTypeForm div#user_input_container label img {
+  width: 80px;
+}
+body main div.container div#contents div.content-01 div#data_type_container div#loader {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 30%;
+  transform: translate(-20%, -50%);
+  background-color: var(--dark-03);
+}
+body main div.container div#contents div.content-02 {
+  flex: 0.5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+body main div.container div#contents div.content-02 div.select-wrapper {
+  --select-width: 140px;
+  --select-height: 45px;
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: var(--select-width);
+  height: var(--select-height);
+  background-color: var(--dark-01);
+  border-radius: 2px;
+}
+body main div.container div#contents div.content-02 div.select-wrapper select {
+  position: relative;
+  width: calc(var(--select-width));
+  height: 100%;
+  font-size: 1.2rem;
+  padding-left: 10px;
+  color: var(--light-01);
+  background-color: transparent;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+body main div.container div#contents div.content-02 div.select-wrapper select option {
+  background-color: var(--dark-01);
+}
+body main div.container div#contents div.content-02 div.select-wrapper div.arrow {
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 50%;
+  right: 20%;
+  transform: translateY(-30%);
+  pointer-events: none;
+  border: calc(var(--select-height) * 0.15) solid transparent;
+  border-top: calc(var(--select-height) * 0.25) solid var(--light-02);
+}
+body main div.container div#contents div.content-02 div#summary_container {
+  width: 100%;
+  height: 60%;
+  background-color: var(--light-02);
+}
+
+/*# sourceMappingURL=styles.css.map */

@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const HeaderContainer = styled.div`
     width: 100%;
-    height: 60px;
+    height: var(--headerHeight);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -25,4 +25,12 @@ export const HeaderText = styled.h4`
         },
     }) => size03};
     width: 100%;
+
+    @media (max-width: ${({ theme: { mobileSize } }) => mobileSize + "px"}) {
+        font-size: ${({
+            theme: {
+                fonts: { size05 },
+            },
+        }) => size05};
+    }
 `;

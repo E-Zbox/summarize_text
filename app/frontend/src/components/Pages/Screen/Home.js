@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTheme } from "styled-components";
 // styles
 import {
     HomeContainer,
@@ -8,18 +9,29 @@ import {
     HomeText,
 } from "../../Styles/Screen/Home";
 import { ContentContainer } from "../../Styles/Others/Container";
-import { ButtonContainer, Button } from "../../Styles/Others/Button";
+import {
+    ButtonContainer,
+    Button,
+    ButtonCardMain,
+    ButtonCardContainer,
+    ButtonCardHeader,
+    ButtonCardText,
+} from "../../Styles/Others/Button";
 
-const Home = ({ text, imageSrc, imageSize, href }) => {
+const Home = ({ text, imageSrc, imageSize, href, buttonCard }) => {
     const { homeText, homeSubText, buttonText } = text;
     const { homeImageLarge, homeImageSmall } = imageSrc;
     const { large: homeImageLargeSize, small: homeImageSmallSize } = imageSize;
 
+    const { mobileSize } = useTheme();
+
+    const [isMobileView, setIsMobileView] = useState(false);
     const [firstLoad, setFirstLoad] = useState(false);
     const [screenState, setScreenState] = useState({
         width: null,
         height: null,
     });
+    const [showButtonCard, setShowButtonCard] = useState(false);
 
     useEffect(() => {
         if (!firstLoad) {
@@ -31,6 +43,12 @@ const Home = ({ text, imageSrc, imageSize, href }) => {
         let { clientWidth: width, clientHeight: height } = document.body;
         setScreenState({ width, height });
     }, [firstLoad]);
+
+    useEffect(() => {
+        let condition = screenState.width < mobileSize + 15;
+        setIsMobileView(condition ? true : false);
+    }, [screenState, mobileSize]);
+
     return (
         <HomeContainer
             id={href.home}
@@ -40,16 +58,61 @@ const Home = ({ text, imageSrc, imageSize, href }) => {
             <ContentContainer>
                 <HomeContentContainer>
                     <HomeMainImage
-                        src={homeImageLarge}
-                        height={homeImageLargeSize}
+                        src={isMobileView ? homeImageSmall : homeImageLarge}
+                        height={
+                            isMobileView
+                                ? homeImageSmallSize
+                                : homeImageLargeSize
+                        }
                     />
                     <HomeText>{homeText}</HomeText>
                     <HomeSubText>{homeSubText}</HomeSubText>
-                    <ButtonContainer _width="200px">
-                        <Button borderRadius={5}>
-                            <a href={"#" + href.converter}>{buttonText}</a>
-                        </Button>
+                    <ButtonContainer
+                        _width={
+                            isMobileView ? `${screenState.width}px` : "200px"
+                        }
+                        isMobileView={isMobileView}
+                        showAfter={true}
+                    >
+                        {isMobileView ? (
+                            <Button
+                                _size={"60px"}
+                                borderRadius="200"
+                                onClick={() => setShowButtonCard(true)}
+                            >
+                                <a href={"#" + href.home}>+</a>
+                            </Button>
+                        ) : (
+                            <Button borderRadius={5}>
+                                <a href={"#" + href.converter}>{buttonText}</a>
+                            </Button>
+                        )}
                     </ButtonContainer>
+                    {showButtonCard && (
+                        <ButtonCardMain
+                            onClick={() => setShowButtonCard(false)}
+                        >
+                            <ButtonCardContainer>
+                                <ButtonCardHeader>
+                                    <h4>{buttonCard.header}</h4>
+                                </ButtonCardHeader>
+                                {buttonCard.items.map(
+                                    ({ imageSrc, title }, index) => (
+                                        <ButtonCardText
+                                            key={index}
+                                            href={"#" + href.converter}
+                                        >
+                                            <img
+                                                src={imageSrc}
+                                                alt={imageSrc}
+                                            />
+                                            <p>{title}</p>
+                                        </ButtonCardText>
+                                    )
+                                )}
+                            </ButtonCardContainer>
+                        </ButtonCardMain>
+                    )}
                 </HomeContentContainer>
             </ContentContainer>
         </HomeContainer>

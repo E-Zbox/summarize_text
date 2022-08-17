@@ -22,6 +22,10 @@ export const Container = styled.div`
     overflow: hidden;
     padding: 0px 3px;
     border: 1px solid green;
+
+    @media (max-width: ${({ theme: { mobileSize } }) => mobileSize + "px"}) {
+        width: ${({ _width }) => _width * 0.6 + "px"};
+    }
 `;
 
 export const Text = styled.h4`
@@ -35,6 +39,18 @@ export const Text = styled.h4`
             fonts: { size02 },
         },
     }) => size02};
+
+    @media (max-width: ${({ theme: { mobileSize } }) => mobileSize + "px"}) {
+        font-size: ${({
+            theme: {
+                fonts: { size04 },
+            },
+        }) => size04};
+        font-weight: 600;
+        line-height: 29px;
+        letter-spacing: 0em;
+        text-align: center;
+    }
 `;
 
 export const RectangleContainer = styled.div`

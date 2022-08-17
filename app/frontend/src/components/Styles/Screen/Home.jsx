@@ -15,6 +15,7 @@ export const HomeContainer = styled.main`
 export const HomeContentContainer = styled.div`
     width: 100%;
     height: 100%;
+    /* position: relative; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -49,6 +50,17 @@ export const HomeText = styled.h4`
     }) => size01};
     font-weight: 600;
     /* border: 1px solid red; */
+
+    @media (max-width: ${({ theme: { mobileSize } }) => mobileSize + "px"}) {
+        font-weight: 700;
+        line-height: 22px;
+        letter-spacing: 0em;
+        font-size: ${({
+            theme: {
+                fonts: { size05 },
+            },
+        }) => size05};
+    }
 `;
 
 export const HomeSubText = styled.h4`
@@ -65,4 +77,15 @@ export const HomeSubText = styled.h4`
     }) => size05};
     font-weight: 400;
     /* border: 1px solid red; */
+    @media (max-width: ${({ theme: { mobileSize } }) => mobileSize + "px"}) {
+        width: 70%;
+        text-align: center;
+        line-height: 18.15px;
+        font-weight: 400;
+        font-size: ${({
+            theme: {
+                fonts: { size07 },
+            },
+        }) => size07};
+    }
 `;

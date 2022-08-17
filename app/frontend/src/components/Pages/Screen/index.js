@@ -19,6 +19,7 @@ const Navigator = ({ home, converter, href }) => {
                     text={{ ...home.text }}
                     imageSrc={{ ...home.imageSrc }}
                     imageSize={{ ...home.imageSize }}
+                    buttonCard={{ ...home.buttonCard }}
                 />
                 {/*<p>Ononogbu Ebenezer</p>*/}
                 <Converter

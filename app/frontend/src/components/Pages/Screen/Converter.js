@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "styled-components";
 // styles
 import {
@@ -33,9 +33,16 @@ const Converter = ({ text, imageSrc, href }) => {
     // theme
     const {
         colors: { blue02, blue021, black01, black011, black02 },
+        mobileSize,
     } = useTheme();
 
     const [inputOption, setInputOption] = useState(inputOptions[0]);
+    const [typeOption, setTypeOption] = useState(typeOptions[0]);
+    const [isMobileView, setIsMobileView] = useState(false);
+    const [screenState, setScreenState] = useState({
+        width: null,
+        height: null,
+    });
     const [formState, setFormState] = useForm({
         input_text: "",
         input_link: "",
@@ -46,6 +53,10 @@ const Converter = ({ text, imageSrc, href }) => {
         setInputOption(value);
     };
 
+    const handleTypeOptions = ({ target: { value } }) => {
+        setTypeOption(value);
+    };
+
     const handleImageInput = (e) => {
         const allowedImageTypes = [
             "image/png",
@@ -54,17 +65,13 @@ const Converter = ({ text, imageSrc, href }) => {
             "image/gif",
         ];
         try {
-            console.log({ e });
             let {
                 target: {
                     files,
                     labels: [labelElement],
                 },
             } = e;
-            console.log("here you are ", { files });
-            let [{ name: _name, size, type }] = files;
-            console.log({ _name });
-            console.log(e.target.value);
+            let [{ size, type }] = files;
             let maxSize = 1024 * 1024;
             let _size = Number(Number(size / maxSize).toPrecision(3));
 
@@ -126,7 +133,7 @@ const Converter = ({ text, imageSrc, href }) => {
                         />
                         <FormLabel htmlFor="input_image">
                             <img src={largeCameraIcon} alt="kpele oo" />
-                            <CardText>Select image to upload</CardText>
+                            <CardText>Upload image</CardText>
                         </FormLabel>
                     </>
                 );
@@ -135,20 +142,40 @@ const Converter = ({ text, imageSrc, href }) => {
         }
     };
 
+    useEffect(() => {
+        let { clientHeight: height, clientWidth: width } = document.body;
+        setScreenState({ height, width });
+    }, []);
+
+    useEffect(() => {
+        let condition = screenState.width < mobileSize + 15;
+        setIsMobileView(condition ? true : false);
+    }, [screenState, mobileSize]);
+
     return (
         <ConverterContainer id={href.converter}>
-            <ContentContainer>
+            <ContentContainer _width={"100%"}>
                 <ConverterContentContainer>
                     <MenuContainer>
-                        <ListContainer>
-                            <List _color={black02}>
-                                <a href={"#" + href.home}>Home</a>
-                            </List>
-                            <List _color={blue02}>&gt;</List>
-                            <List _color={black01} _fontWeight={600}>
-                                Converter
-                            </List>
-                        </ListContainer>
+                        {isMobileView ? (
+                            <ListContainer>
+                                <List _color={black01}>
+                                    <a href={"#" + href.home}>.</a>
+                                    <a href={"#" + href.home}>.</a>
+                                    <a href={"#" + href.home}>.</a>
+                                </List>
+                            </ListContainer>
+                        ) : (
+                            <ListContainer>
+                                <List _color={black02}>
+                                    <a href={"#" + href.home}>Home</a>
+                                </List>
+                                <List _color={blue02}>&gt;</List>
+                                <List _color={black01} _fontWeight={600}>
+                                    Converter
+                                </List>
+                            </ListContainer>
+                        )}
                     </MenuContainer>
                     <CardContainer>
                         <Card>
@@ -162,7 +189,10 @@ const Converter = ({ text, imageSrc, href }) => {
                                 </Select>
                                 <RowFlexContainer>
                                     <CardText>Type:</CardText>
-                                    <Select value={typeOptions[0]}>
+                                    <Select
+                                        onChange={handleTypeOptions}
+                                        value={typeOption}
+                                    >
                                         {typeOptions.map((option, index) => (
                                             <Option key={index} value={option}>
                                                 {option}
@@ -173,7 +203,11 @@ const Converter = ({ text, imageSrc, href }) => {
                             </CardHeader>
                             <FormContainer>
                                 {getFormElement()}
-                                <ButtonContainer _width={"100%"}>
+                                <ButtonContainer
+                                    _width={isMobileView ? "70%" : "100%"}
+                                    _height={isMobileView ? "35px" : "40px"}
+                                    showAfter={false}
+                                >
                                     <Button>Convert</Button>
                                 </ButtonContainer>
                             </FormContainer>

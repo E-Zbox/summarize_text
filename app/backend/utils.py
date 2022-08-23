@@ -157,7 +157,8 @@ def extractive_summarizer(input_text=None, input_image=None, input_link = None, 
             return summary
 
     elif input_link:
-        pass
+        summary = None
+        return summary
         
 
 def convert_b64_to_image(b64str):

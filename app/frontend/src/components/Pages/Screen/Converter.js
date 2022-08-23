@@ -48,6 +48,12 @@ const Converter = ({ text, imageSrc, href }) => {
         input_link: "",
         input_image: "",
     });
+    const [requestPayload, setRequestPayload] = useState({
+        type: "",
+        body: null,
+        user_id: "",
+        summary_type: "",
+    });
 
     const handleInputOptions = ({ target: { value } }) => {
         setInputOption(value);
@@ -58,6 +64,7 @@ const Converter = ({ text, imageSrc, href }) => {
     };
 
     const handleImageInput = (e) => {
+        var file;
         const allowedImageTypes = [
             "image/png",
             "image/jpg",
@@ -72,6 +79,7 @@ const Converter = ({ text, imageSrc, href }) => {
                 },
             } = e;
             let [{ size, type }] = files;
+            file = files[0];
             let maxSize = 1024 * 1024;
             let _size = Number(Number(size / maxSize).toPrecision(3));
 
@@ -85,18 +93,22 @@ const Converter = ({ text, imageSrc, href }) => {
             }
 
             let imageReader = new FileReader();
-            imageReader.readAsDataURL(files[0]);
+            imageReader.readAsDataURL(file);
             imageReader.onerror = () => {
                 throw Error("An error occurred");
             };
             imageReader.addEventListener("load", () => {
-                labelElement.style.backgroundImage = `linear-gradient(to bottom, ${black011}, ${blue021}), url(${imageReader.result})`;
+                let dataurl = imageReader.result;
+
+                labelElement.style.backgroundImage = `linear-gradient(to bottom, ${black011}, ${blue021}), url(${dataurl})`;
                 labelElement.style.backgroundPosition = "0% 0%";
                 labelElement.style.backgroundSize = "cover";
                 labelElement.style.backgroundRepeat = "no-repeat";
             });
         } catch (error) {
             console.log({ error });
+        } finally {
+            return file;
         }
     };
 
@@ -109,7 +121,13 @@ const Converter = ({ text, imageSrc, href }) => {
                         name="input_text"
                         placeholder="Enter word, phrase to be summarized"
                         value={formState.input_text}
-                        onChange={(e) => setFormState(e)}
+                        onChange={(e) => {
+                            setFormState(e);
+                            setRequestPayload({
+                                type: "text",
+                                body: formState.input_text,
+                            });
+                        }}
                     />
                 );
             case "link":
@@ -119,7 +137,14 @@ const Converter = ({ text, imageSrc, href }) => {
                         name="input_link"
                         placeholder="Enter link to article or write-up to be summarized"
                         value={formState.input_link}
-                        onChange={(e) => setFormState(e)}
+                        onChange={(e) => {
+                            setFormState(e);
+                            console.log(formState.input_link);
+                            setRequestPayload({
+                                type: "link",
+                                body: formState.input_link,
+                            });
+                        }}
                     />
                 );
             case "image":
@@ -129,7 +154,15 @@ const Converter = ({ text, imageSrc, href }) => {
                             type="file"
                             name="input_image"
                             id="input_image"
-                            onChange={(e) => handleImageInput(e)}
+                            onChange={(e) => {
+                                let file = handleImageInput(e);
+                                if (file) {
+                                    setRequestPayload({
+                                        type: "image",
+                                        body: file,
+                                    });
+                                }
+                            }}
                         />
                         <FormLabel htmlFor="input_image">
                             <img src={largeCameraIcon} alt="pele oo" />
@@ -140,6 +173,41 @@ const Converter = ({ text, imageSrc, href }) => {
             default:
                 return <FormInput type="text" name="input_text" value={2} />;
         }
+    };
+
+    const handleSubmit = () => {
+        let url = "http://127.0.0.1:5000/form";
+        let user_id = new Date();
+        setRequestPayload((prevState) => ({
+            ...prevState,
+            user_id,
+            summary_type: typeOption,
+        }));
+
+        console.log({ typeOption });
+        console.log({ formState });
+        console.log({ requestPayload });
+
+        let body = new FormData();
+        body.append("type", requestPayload.type);
+        body.append("body", requestPayload.body);
+        body.append("user_id", requestPayload.user_id);
+        body.append("summary_type", requestPayload.summary_type);
+
+        let options = {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+            },
+            body,
+        };
+
+        delete options.headers["Content-Type"];
+
+        fetch(url, options)
+            .then((res) => res.json())
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
     };
 
     useEffect(() => {
@@ -208,7 +276,9 @@ const Converter = ({ text, imageSrc, href }) => {
                                     _height={isMobileView ? "35px" : "40px"}
                                     showAfter={false}
                                 >
-                                    <Button>Convert</Button>
+                                    <Button onClick={handleSubmit}>
+                                        Convert
+                                    </Button>
                                 </ButtonContainer>
                             </FormContainer>
                         </Card>

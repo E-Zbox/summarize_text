@@ -104,8 +104,7 @@ def extractive_summarizer(input_text=None, input_image=None, input_link = None, 
             return summary
 
     elif input_image:
-        image = convert_b64_to_image(input_image)
-        text_from_image = extract_text_with_ocr(image)
+        text_from_image = extract_text_with_ocr(input_image)
         nlp = spacy.load('en_core_web_sm')
         doc = nlp(text_from_image.replace("\n", " "))
         tokens = [token.text for token in doc]
@@ -168,9 +167,9 @@ def convert_b64_to_image(b64str):
     return img
 def extract_text_with_ocr(image):
     img= cv2.imread(image)
-    cv2.imshow('sample image', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow('sample image', img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     text = pytesseract.image_to_string(img)
     return text
 

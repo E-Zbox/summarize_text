@@ -132,7 +132,7 @@ const Converter = ({ text, imageSrc, href }) => {
                             onChange={(e) => handleImageInput(e)}
                         />
                         <FormLabel htmlFor="input_image">
-                            <img src={largeCameraIcon} alt="kpele oo" />
+                            <img src={largeCameraIcon} alt="pele oo" />
                             <CardText>Upload image</CardText>
                         </FormLabel>
                     </>

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { useTheme } from "styled-components";
+import { useContext, useEffect, useState } from "react";
+// context
+import {AppContext} from "../../../contexts"
 // styles
 import {
     HomeContainer,
@@ -23,10 +24,8 @@ const Home = ({ text, imageSrc, imageSize, href, buttonCard }) => {
     const { homeImageLarge, homeImageSmall } = imageSrc;
     const { large: homeImageLargeSize, small: homeImageSmallSize } = imageSize;
 
-    const { mobileSize } = useTheme();
+    const { firstLoad, isMobileView} = useContext(AppContext)
 
-    const [isMobileView, setIsMobileView] = useState(false);
-    const [firstLoad, setFirstLoad] = useState(false);
     const [screenState, setScreenState] = useState({
         width: null,
         height: null,
@@ -34,20 +33,9 @@ const Home = ({ text, imageSrc, imageSize, href, buttonCard }) => {
     const [showButtonCard, setShowButtonCard] = useState(false);
 
     useEffect(() => {
-        if (!firstLoad) {
-            setFirstLoad(true);
-        }
-    }, [firstLoad]);
-
-    useEffect(() => {
         let { clientWidth: width, clientHeight: height } = document.body;
         setScreenState({ width, height });
     }, [firstLoad]);
-
-    useEffect(() => {
-        let condition = screenState.width < mobileSize + 15;
-        setIsMobileView(condition ? true : false);
-    }, [screenState, mobileSize]);
 
     return (
         <HomeContainer

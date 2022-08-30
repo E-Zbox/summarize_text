@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 // components
 import Loader from "./components/Pages/Loader";
 import Screen from "./components/Pages/Screen";
+// context
+import {AppContext} from "./contexts"
 // styles
 import GlobalStyles from "./components/Styles/Global.Styles";
 // themes
@@ -15,6 +17,7 @@ function App() {
         height: null,
     });
     const [isLoading, setIsLoading] = useState(true);
+    const [isMobileView, setIsMobileView] = useState(false);
 
     useEffect(() => {
         if (!firstLoad) {
@@ -34,10 +37,16 @@ function App() {
             setIsLoading(false);
         });
     });
+
+    useEffect(() => {
+        let condition = screenState.width < theme.mobileSize + 15;
+        setIsMobileView(condition ? true : false);
+    }, [screenState]);
+
     return (
         <>
             <ThemeProvider theme={theme}>
-                {isLoading ? (
+                <AppContext.Provider value={{firstLoad, screenState, isLoading, isMobileView}}>{isLoading ? (
                     <Loader
                         mainText={loader_page.mainText}
                         _width={0.7 * screenState.width}
@@ -49,6 +58,7 @@ function App() {
                     />
                 )}
                 <GlobalStyles />
+                </AppContext.Provider>
             </ThemeProvider>
         </>
     );

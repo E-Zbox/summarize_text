@@ -1,4 +1,13 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const toLeft = keyframes(`
+    from {
+        transform: translateX(0)
+    }
+    to {
+        transform: translateX(100%)
+    }
+`);
 
 export const MainContainer = styled.main`
     width: 100%;
@@ -73,4 +82,5 @@ export const Rectangle = styled.div`
     width: 60%;
     height: 100%;
     border-radius: 30px;
+    animation: ${toLeft} 1.5s linear infinite;
 `;

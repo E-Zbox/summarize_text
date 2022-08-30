@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTheme } from "styled-components";
+// context
+import {AppContext} from "../../../contexts"
 // styles
 import {
     ConverterContainer,
@@ -33,26 +35,22 @@ const Converter = ({ text, imageSrc, href }) => {
     // theme
     const {
         colors: { blue02, blue021, black01, black011, black02 },
-        mobileSize,
     } = useTheme();
+
+    const { isMobileView,} = useContext(AppContext)
 
     const [inputOption, setInputOption] = useState(inputOptions[0]);
     const [typeOption, setTypeOption] = useState(typeOptions[0]);
-    const [isMobileView, setIsMobileView] = useState(false);
-    const [screenState, setScreenState] = useState({
-        width: null,
-        height: null,
-    });
+
     const [formState, setFormState] = useForm({
         input_text: "",
         input_link: "",
-        input_image: "",
+        type: ""
     });
     const [requestPayload, setRequestPayload] = useState({
-        type: "",
+        type: inputOption,
         body: null,
-        user_id: "",
-        summary_type: "",
+        summary_type: typeOption,
     });
 
     const handleInputOptions = ({ target: { value } }) => {
@@ -121,8 +119,8 @@ const Converter = ({ text, imageSrc, href }) => {
                         name="input_text"
                         placeholder="Enter word, phrase to be summarized"
                         value={formState.input_text}
-                        onChange={(e) => {
-                            setFormState(e);
+                       onChange={(e) => {
+                            setFormState(e, "text");
                             setRequestPayload({
                                 type: "text",
                                 body: formState.input_text,
@@ -138,8 +136,7 @@ const Converter = ({ text, imageSrc, href }) => {
                         placeholder="Enter link to article or write-up to be summarized"
                         value={formState.input_link}
                         onChange={(e) => {
-                            setFormState(e);
-                            console.log(formState.input_link);
+                            setFormState(e, "link");
                             setRequestPayload({
                                 type: "link",
                                 body: formState.input_link,
@@ -157,15 +154,16 @@ const Converter = ({ text, imageSrc, href }) => {
                             onChange={(e) => {
                                 let file = handleImageInput(e);
                                 if (file) {
-                                    setRequestPayload({
+                                    setRequestPayload(prevState=> ({
+                                        ...prevState,
                                         type: "image",
                                         body: file,
-                                    });
+                                    }))
                                 }
                             }}
                         />
                         <FormLabel htmlFor="input_image">
-                            <img src={largeCameraIcon} alt="pele oo" />
+                            <img src={largeCameraIcon} alt="kpele oo" />
                             <CardText>Upload image</CardText>
                         </FormLabel>
                     </>
@@ -176,22 +174,13 @@ const Converter = ({ text, imageSrc, href }) => {
     };
 
     const handleSubmit = () => {
-        let url = "http://127.0.0.1:5000/form";
-        let user_id = new Date();
-        setRequestPayload((prevState) => ({
-            ...prevState,
-            user_id,
-            summary_type: typeOption,
-        }));
-
-        console.log({ typeOption });
-        console.log({ formState });
-        console.log({ requestPayload });
+        console.log({formState, requestPayload})
+        let url = "http://127.0.0.1:5000/summary";
 
         let body = new FormData();
         body.append("type", requestPayload.type);
         body.append("body", requestPayload.body);
-        body.append("user_id", requestPayload.user_id);
+        // body.append("user_id", requestPayload.user_id);
         body.append("summary_type", requestPayload.summary_type);
 
         let options = {
@@ -208,17 +197,31 @@ const Converter = ({ text, imageSrc, href }) => {
             .then((res) => res.json())
             .then((res) => console.log(res))
             .catch((err) => console.log(err));
+            
     };
 
-    useEffect(() => {
-        let { clientHeight: height, clientWidth: width } = document.body;
-        setScreenState({ height, width });
-    }, []);
+    const handleRequestPayload = (type, summary_type)=> {
+        switch (type) {
+            case "text":
+                setRequestPayload(prevState => ({...prevState, type, body:formState.input_text, summary_type}))
+                break;
+            case "link":
+                setRequestPayload(prevState => ({...prevState, type, body: formState.input_link, summary_type}))
+                break;
+            default:
+                break;
+        }
+    }
 
-    useEffect(() => {
-        let condition = screenState.width < mobileSize + 15;
-        setIsMobileView(condition ? true : false);
-    }, [screenState, mobileSize]);
+    useEffect(()=> {
+        if (inputOption !== formState.type) {
+            setFormState(null, inputOption)
+        }
+    }, [inputOption])
+
+    useEffect(()=> {
+        handleRequestPayload(formState.type, typeOption)
+    }, [formState, typeOption])
 
     return (
         <ConverterContainer id={href.converter}>

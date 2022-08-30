@@ -5,8 +5,14 @@ const useForm = (initialState) => {
 
     return [
         state,
-        ({ target: { name, value } }) => setState({ ...state, [name]: value }),
+        (e, type) => {
+            if (e !== null) {
+                let { target: { name, value } } = e
+                return setState({ ...state, [name]: value, type })
+            }
+            return setState({...state, type})
+        },
     ];
 };
 
-export default useForm
+export default useForm;

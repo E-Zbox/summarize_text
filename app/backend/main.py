@@ -15,12 +15,12 @@ def summarizer():
     if req_type == "text":
         body = request.form["body"]
     elif req_type == "image":
-        body = request.files["body"]
+        b64Str = request.form["body"]
         print(dir(body))
     elif req_type == "link":
         text, title = get_only_text(request.form["body"])
         body = f"{text}\n{title}"
-    # print(dir(request))
+    
     print({"body": body, "summary_type": summary_type, "type": req_type})
 
     if req_type == "text":
@@ -28,10 +28,9 @@ def summarizer():
 
     elif req_type == "link":
         summary = extractive_summarizer(input_text=body, summary_type=summary_type)
-        # Input link hasn't be implemented yet, sometimes later
 
     elif req_type == "image":
-        summary = extractive_summarizer(input_image=body, summary_type=summary_type)
+        summary = extractive_summarizer(input_image=b64Str, summary_type=summary_type)
 
     if summary is not None:
         status = True
@@ -50,5 +49,5 @@ if __name__ == "__main__":
 
 # __Developer Note
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# NB: Kindly test it from your end locally also with the interface and any issues that arises let me know
+
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

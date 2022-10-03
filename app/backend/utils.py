@@ -75,7 +75,7 @@ def extractive_summarizer(
                         ):
                             word_frequency[word.text] = 1
                         word_frequency[word.text] += 1
-        print(word_frequency)
+        #print(word_frequency)
         max_frequency = max(word_frequency.values())
         for word in word_frequency.keys():
             word_frequency[word] = word_frequency[word] / max_frequency
@@ -127,14 +127,19 @@ def extractive_summarizer(
         doc = nlp(text_from_image.replace("\n", " "))
         tokens = [token.text for token in doc]
 
-        word_frequency = {}
         for word in doc:
             if word.text.lower() not in stop_words:
                 if word.text.lower() not in punctuation:
                     if word.text.lower() not in word_frequency.keys():
                         word_frequency[word.text] = 1
                     else:
-                        word_frequency[word.text] += 1
+                        if (
+                            word.text not in word_frequency.keys()
+                            and word.text.lower() in word_frequency.keys()
+                        ):
+                            word_frequency[word.text] = 1
+                        word_frequency[word.text] 
+        #print(word_frequency)
         max_frequency = max(word_frequency.values())
         for word in word_frequency.keys():
             word_frequency[word] = word_frequency[word] / max_frequency

@@ -129,15 +129,14 @@ export const Card = styled.div`
         }) => black012};
     border-radius: 5px;
     overflow: hidden;
+    opacity: ${({ enableCard }) => (enableCard ? 1 : 0.75)};
+    background-color: ${({
+        enableCard,
+        theme: {
+            colors: { black012 },
+        },
+    }) => !enableCard && black012};
 
-    &:nth-child(2) {
-        opacity: 0.75;
-        background-color: ${({
-            theme: {
-                colors: { black012 },
-            },
-        }) => black012};
-    }
     @media (max-width: ${({ theme: { mobileSize } }) => mobileSize + "px"}) {
         flex: 1;
         border-radius: 0px;
@@ -215,6 +214,9 @@ export const FormContainer = styled.div`
 
 export const FormTextArea = styled.textarea`
     flex: 1;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    line-height: 1.4rem;
     width: 100%;
     padding: calc(var(--ten-px) * 0.9);
     color: ${({
@@ -325,4 +327,40 @@ export const Option = styled.option`
             },
         }) => size07};
     }
+`;
+
+export const SummaryContainer = styled.div`
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    color: ${({
+        theme: {
+            colors: { black01 },
+        },
+    }) => black01};
+    background-color: #fffd;
+    padding: var(--seven-px);
+    overflow-y: scroll;
+    visibility: ${({ enableCard }) => !enableCard && "hidden"};
+`;
+
+export const SummaryText = styled.h4`
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    line-height: 1.4rem;
+    font-weight: 200;
+    color: ${({
+        theme: {
+            colors: { blue03 },
+        },
+    }) => blue03};
+`;
+
+export const Loader = styled.img`
+    align-self: center;
+    justify-self: center;
+    width: 80px;
 `;

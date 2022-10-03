@@ -7,10 +7,12 @@ const useForm = (initialState) => {
         state,
         (e, type) => {
             if (e !== null) {
-                let { target: { name, value } } = e
-                return setState({ ...state, [name]: value, type })
+                let {
+                    target: { name, value },
+                } = e;
+                return setState({ [name]: value, type });
             }
-            return setState({...state, type})
+            return setState({ ...state, type });
         },
     ];
 };

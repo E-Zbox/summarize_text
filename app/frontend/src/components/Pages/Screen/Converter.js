@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useTheme } from "styled-components";
 // context
-import {AppContext} from "../../../contexts"
+import { AppContext } from "../../../contexts";
 // styles
 import {
     ConverterContainer,
@@ -19,6 +19,9 @@ import {
     FormLabel,
     Select,
     Option,
+    SummaryContainer,
+    Loader,
+    SummaryText,
 } from "../../Styles/Screen/Converter";
 import {
     ContentContainer,
@@ -37,21 +40,26 @@ const Converter = ({ text, imageSrc, href }) => {
         colors: { blue02, blue021, black01, black011, black02 },
     } = useTheme();
 
-    const { isMobileView,} = useContext(AppContext)
-
-    const [inputOption, setInputOption] = useState(inputOptions[0]);
-    const [typeOption, setTypeOption] = useState(typeOptions[0]);
+    const { isMobileView } = useContext(AppContext);
 
     const [formState, setFormState] = useForm({
         input_text: "",
         input_link: "",
-        type: ""
+        input_image: "",
+        type: "",
     });
+
+    const [loading, setLoading] = useState(false);
+
+    const [inputOption, setInputOption] = useState(inputOptions[0]);
+    const [typeOption, setTypeOption] = useState(typeOptions[0]);
     const [requestPayload, setRequestPayload] = useState({
         type: inputOption,
         body: null,
         summary_type: typeOption,
     });
+
+    const [responsePayload, setResponsePayload] = useState({ success: false });
 
     const handleInputOptions = ({ target: { value } }) => {
         setInputOption(value);
@@ -62,7 +70,7 @@ const Converter = ({ text, imageSrc, href }) => {
     };
 
     const handleImageInput = (e) => {
-        var file;
+        // var file;
         const allowedImageTypes = [
             "image/png",
             "image/jpg",
@@ -77,7 +85,7 @@ const Converter = ({ text, imageSrc, href }) => {
                 },
             } = e;
             let [{ size, type }] = files;
-            file = files[0];
+            // file = files[0];
             let maxSize = 1024 * 1024;
             let _size = Number(Number(size / maxSize).toPrecision(3));
 
@@ -91,22 +99,30 @@ const Converter = ({ text, imageSrc, href }) => {
             }
 
             let imageReader = new FileReader();
-            imageReader.readAsDataURL(file);
+            imageReader.readAsDataURL(files[0]);
             imageReader.onerror = () => {
                 throw Error("An error occurred");
             };
+
+            let dataurl;
+
             imageReader.addEventListener("load", () => {
-                let dataurl = imageReader.result;
+                dataurl = imageReader.result;
 
                 labelElement.style.backgroundImage = `linear-gradient(to bottom, ${black011}, ${blue021}), url(${dataurl})`;
                 labelElement.style.backgroundPosition = "0% 0%";
                 labelElement.style.backgroundSize = "cover";
                 labelElement.style.backgroundRepeat = "no-repeat";
+
+                setFormState(
+                    { target: { name: "input_image", value: dataurl } },
+                    "image"
+                );
             });
         } catch (error) {
             console.log({ error });
         } finally {
-            return file;
+            return formState.input_image;
         }
     };
 
@@ -119,12 +135,12 @@ const Converter = ({ text, imageSrc, href }) => {
                         name="input_text"
                         placeholder="Enter word, phrase to be summarized"
                         value={formState.input_text}
-                       onChange={(e) => {
+                        onChange={(e) => {
                             setFormState(e, "text");
-                            setRequestPayload({
-                                type: "text",
-                                body: formState.input_text,
-                            });
+                            // setRequestPayload({
+                            //     type: "text",
+                            //     body: formState.input_text,
+                            // });
                         }}
                     />
                 );
@@ -137,10 +153,10 @@ const Converter = ({ text, imageSrc, href }) => {
                         value={formState.input_link}
                         onChange={(e) => {
                             setFormState(e, "link");
-                            setRequestPayload({
-                                type: "link",
-                                body: formState.input_link,
-                            });
+                            // setRequestPayload({
+                            //     type: "link",
+                            //     body: formState.input_link,
+                            // });
                         }}
                     />
                 );
@@ -152,14 +168,7 @@ const Converter = ({ text, imageSrc, href }) => {
                             name="input_image"
                             id="input_image"
                             onChange={(e) => {
-                                let file = handleImageInput(e);
-                                if (file) {
-                                    setRequestPayload(prevState=> ({
-                                        ...prevState,
-                                        type: "image",
-                                        body: file,
-                                    }))
-                                }
+                                handleImageInput(e);
                             }}
                         />
                         <FormLabel htmlFor="input_image">
@@ -174,7 +183,7 @@ const Converter = ({ text, imageSrc, href }) => {
     };
 
     const handleSubmit = () => {
-        console.log({formState, requestPayload})
+        console.log({ formState, requestPayload });
         let url = "http://127.0.0.1:5000/summary";
 
         let body = new FormData();
@@ -193,35 +202,108 @@ const Converter = ({ text, imageSrc, href }) => {
 
         delete options.headers["Content-Type"];
 
+        setResponsePayload((prevState) => ({
+            ...prevState,
+            success: false,
+            error: false,
+        }));
+
+        setLoading(true);
+
         fetch(url, options)
             .then((res) => res.json())
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
-            
+            .then((res) => {
+                setResponsePayload({ ...res, error: false });
+                setLoading(false);
+            })
+            .catch((err) => {
+                setLoading(false);
+                setResponsePayload({ success: false, err, error: true });
+            });
     };
 
-    const handleRequestPayload = (type, summary_type)=> {
+    const handleRequestPayload = (type, summary_type) => {
         switch (type) {
             case "text":
-                setRequestPayload(prevState => ({...prevState, type, body:formState.input_text, summary_type}))
+                setRequestPayload((prevState) => ({
+                    ...prevState,
+                    type,
+                    body:
+                        formState.input_text &&
+                        formState.input_text
+                            .replaceAll("\n", "")
+                            .replaceAll("\r", "")
+                            .replaceAll("\t", ""),
+                    summary_type,
+                }));
                 break;
             case "link":
-                setRequestPayload(prevState => ({...prevState, type, body: formState.input_link, summary_type}))
+                setRequestPayload((prevState) => ({
+                    ...prevState,
+                    type,
+                    body: formState.input_link,
+                    summary_type,
+                }));
                 break;
             default:
                 break;
         }
-    }
+    };
 
-    useEffect(()=> {
+    useEffect(() => {
         if (inputOption !== formState.type) {
-            setFormState(null, inputOption)
+            setFormState(null, inputOption);
         }
-    }, [inputOption])
+    }, [inputOption]);
 
-    useEffect(()=> {
-        handleRequestPayload(formState.type, typeOption)
-    }, [formState, typeOption])
+    useEffect(() => {
+        if (formState.type !== "image") {
+            handleRequestPayload(formState.type, typeOption);
+        } else {
+            setRequestPayload((prevState) => ({
+                ...prevState,
+                type: "image",
+                summary_type: typeOption,
+            }));
+        }
+    }, [typeOption]);
+
+    useEffect(() => {
+        if (formState.type !== "image") {
+            handleRequestPayload(formState.type, typeOption);
+        } else {
+            setRequestPayload((prevState) => ({
+                ...prevState,
+                type: "image",
+                summary_type: typeOption,
+                body: formState.input_image,
+            }));
+        }
+    }, [formState]);
+
+    useEffect(() => {
+        console.log({ requestPayload });
+    }, [requestPayload]);
+
+    useEffect(() => {
+        if (
+            responsePayload.success === false &&
+            responsePayload.error === true
+        ) {
+            console.log(responsePayload);
+            window.alert(responsePayload.err);
+            setResponsePayload((prevState) => ({ ...prevState, error: false }));
+        }
+
+        if (responsePayload.success && !responsePayload.summary_data) {
+            setResponsePayload((prevState) => ({
+                ...prevState,
+                success: false,
+                error: true,
+                err: "Could not summarize text",
+            }));
+        }
+    }, [responsePayload]);
 
     return (
         <ConverterContainer id={href.converter}>
@@ -249,7 +331,7 @@ const Converter = ({ text, imageSrc, href }) => {
                         )}
                     </MenuContainer>
                     <CardContainer>
-                        <Card>
+                        <Card enableCard={true}>
                             <CardHeader>
                                 <Select onChange={handleInputOptions}>
                                     {inputOptions.map((option, index) => (
@@ -285,10 +367,21 @@ const Converter = ({ text, imageSrc, href }) => {
                                 </ButtonContainer>
                             </FormContainer>
                         </Card>
-                        <Card>
+                        <Card enableCard={responsePayload.success}>
                             <CardHeader>
                                 <CardText>Summary</CardText>
                             </CardHeader>
+                            {loading ? (
+                                <Loader src="./assets/gifs/Spinner-1s-200px.gif" />
+                            ) : (
+                                <SummaryContainer
+                                    enableCard={responsePayload.success}
+                                >
+                                    <SummaryText>
+                                        {responsePayload.summary_data}
+                                    </SummaryText>
+                                </SummaryContainer>
+                            )}
                         </Card>
                     </CardContainer>
                 </ConverterContentContainer>

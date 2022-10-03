@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Loader from "./components/Pages/Loader";
 import Screen from "./components/Pages/Screen";
 // context
-import {AppContext} from "./contexts"
+import { AppContext } from "./contexts";
 // styles
 import GlobalStyles from "./components/Styles/Global.Styles";
 // themes
@@ -33,9 +33,17 @@ function App() {
     }, [firstLoad]);
 
     useEffect(() => {
-        document.addEventListener("click", (e) => {
-            setIsLoading(false);
+        var timer;
+
+        window.addEventListener("load", () => {
+            timer = setTimeout(() => setIsLoading(false), 4000);
         });
+
+        return () => {
+            window.removeEventListener("load", () => {
+                clearTimeout(timer);
+            });
+        };
     });
 
     useEffect(() => {
@@ -46,18 +54,21 @@ function App() {
     return (
         <>
             <ThemeProvider theme={theme}>
-                <AppContext.Provider value={{firstLoad, screenState, isLoading, isMobileView}}>{isLoading ? (
-                    <Loader
-                        mainText={loader_page.mainText}
-                        _width={0.7 * screenState.width}
-                    />
-                ) : (
-                    <Screen
-                        screenData={screen}
-                        mainText={loader_page.mainText}
-                    />
-                )}
-                <GlobalStyles />
+                <AppContext.Provider
+                    value={{ firstLoad, screenState, isLoading, isMobileView }}
+                >
+                    {isLoading ? (
+                        <Loader
+                            mainText={loader_page.mainText}
+                            _width={0.7 * screenState.width}
+                        />
+                    ) : (
+                        <Screen
+                            screenData={screen}
+                            mainText={loader_page.mainText}
+                        />
+                    )}
+                    <GlobalStyles />
                 </AppContext.Provider>
             </ThemeProvider>
         </>

@@ -15,7 +15,7 @@ def summarizer():
     if req_type == "text":
         body = request.form["body"]
     elif req_type == "image":
-        b64Str = request.form["body"]
+        body = request.form["body"]
         print(dir(body))
     elif req_type == "link":
         text, title = get_only_text(request.form["body"])
@@ -30,7 +30,7 @@ def summarizer():
         summary = extractive_summarizer(input_text=body, summary_type=summary_type)
 
     elif req_type == "image":
-        summary = extractive_summarizer(input_image=b64Str, summary_type=summary_type)
+        summary = extractive_summarizer(input_image=body, summary_type=summary_type)
 
     if summary is not None:
         status = True

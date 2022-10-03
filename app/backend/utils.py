@@ -16,7 +16,7 @@ import requests
 from PIL import Image
 
 pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\\Users\\ssffff\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
+    r"C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe"
 )
 
 punctuation = punctuation + "\n"
@@ -52,13 +52,12 @@ MODEL_PATH = "./model/pegasus-xsum_model"
 #     elif input_link:
 #         pass
 
-
 def extractive_summarizer(
     input_text=None, input_image=None, input_link=None, summary_type="moderate"
 ):
+    stop_words = list(STOP_WORDS)
+    nlp = spacy.load("en_core_web_sm")
     if input_text:
-        stop_words = list(STOP_WORDS)
-        nlp = spacy.load("en_core_web_sm")
         doc = nlp(input_text.replace("\n", " "))
         tokens = [token.text for token in doc]
 
@@ -123,7 +122,6 @@ def extractive_summarizer(
     elif input_image:
         image_nparray = convert_b64_to_image(input_image)
         text_from_image = extract_text_with_ocr(image_nparray)
-        nlp = spacy.load("en_core_web_sm")
         doc = nlp(text_from_image.replace("\n", " "))
         tokens = [token.text for token in doc]
 
@@ -134,6 +132,7 @@ def extractive_summarizer(
                     if word.text.lower() not in word_frequency.keys():
                         word_frequency[word.text] = 1
                     else:
+                        print(word_frequency[word.text])
                         word_frequency[word.text] += 1
         max_frequency = max(word_frequency.values())
         for word in word_frequency.keys():

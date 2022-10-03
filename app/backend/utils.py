@@ -56,12 +56,11 @@ MODEL_PATH = "./model/pegasus-xsum_model"
 def extractive_summarizer(
     input_text=None, input_image=None, input_link=None, summary_type="moderate"
 ):
+    stop_words = list(STOP_WORDS)
+    nlp = spacy.load("en_core_web_sm")
     if input_text:
-        stop_words = list(STOP_WORDS)
-        nlp = spacy.load("en_core_web_sm")
         doc = nlp(input_text.replace("\n", " "))
         tokens = [token.text for token in doc]
-
         word_frequency = {}
         for word in doc:
             if word.text.lower() not in stop_words:
@@ -123,7 +122,6 @@ def extractive_summarizer(
     elif input_image:
         image_nparray = convert_b64_to_image(input_image)
         text_from_image = extract_text_with_ocr(image_nparray)
-        nlp = spacy.load("en_core_web_sm")
         doc = nlp(text_from_image.replace("\n", " "))
         tokens = [token.text for token in doc]
 

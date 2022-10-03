@@ -134,7 +134,13 @@ def extractive_summarizer(
                     if word.text.lower() not in word_frequency.keys():
                         word_frequency[word.text] = 1
                     else:
+                        if (
+                            word.text not in word_frequency.keys()
+                            and word.text.lower() in word_frequency.keys()
+                        ):
+                            word_frequency[word.text] = 1
                         word_frequency[word.text] += 1
+        #print(word_frequency)
         max_frequency = max(word_frequency.values())
         for word in word_frequency.keys():
             word_frequency[word] = word_frequency[word] / max_frequency

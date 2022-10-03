@@ -1,0 +1,3 @@
+pytesseract.pytesseract.tesseract_cmd = (
+    r"C:\\Users\\ssffff\\AppData\\Local\\Tesseract-OCR\\tesseract.exe"
+)
